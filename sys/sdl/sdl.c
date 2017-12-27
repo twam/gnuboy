@@ -1,6 +1,6 @@
 /*
  * sdl.c
- * sdl interfaces -- based on svga.c 
+ * sdl interfaces -- based on svga.c
  *
  * (C) 2001 Damian Gryski <dgryski@uwaterloo.ca>
  * Joystick code contributed by David Lau
@@ -73,15 +73,15 @@ static void joy_init()
 {
 	int i;
 	int joy_count;
-	
+
 	/* Initilize the Joystick, and disable all later joystick code if an error occured */
 	if (!use_joy) return;
-	
+
 	if (SDL_InitSubSystem(SDL_INIT_JOYSTICK))
 		return;
-	
+
 	joy_count = SDL_NumJoysticks();
-	
+
 	if (!joy_count)
 		return;
 
@@ -93,9 +93,9 @@ static void joy_init()
 		{
 			sdl_joy_num = i;
 			break;
-		}	
+		}
 	}
-	
+
 	/* make sure that Joystick event polling is a go */
 	SDL_JoystickEventState(SDL_ENABLE);
 }
@@ -103,11 +103,11 @@ static void joy_init()
 static void overlay_init()
 {
 	if (!use_yuv) return;
-	
+
 	if (use_yuv < 0)
 		if (vmode[0] < 320 || vmode[1] < 288)
 			return;
-	
+
 	overlay = SDL_CreateYUVOverlay(320, 144, SDL_YUY2_OVERLAY, screen);
 
 	if (!overlay) return;
@@ -120,7 +120,7 @@ static void overlay_init()
 	}
 
 	SDL_LockYUVOverlay(overlay);
-	
+
 	fb.w = 160;
 	fb.h = 144;
 	fb.pelsize = 4;
@@ -130,7 +130,7 @@ static void overlay_init()
 	fb.cc[0].r = fb.cc[1].r = fb.cc[2].r = fb.cc[3].r = 0;
 	fb.dirty = 1;
 	fb.enabled = 1;
-	
+
 	overlay_rect.x = 0;
 	overlay_rect.y = 0;
 	overlay_rect.w = vmode[0];
@@ -148,7 +148,7 @@ static void overlay_init()
 		fb.cc[3].l = 16;
 		break;
 	}
-	
+
 	SDL_UnlockYUVOverlay(overlay);
 }
 
@@ -163,7 +163,7 @@ void vid_init()
 		vmode[0] = 160 * scale;
 		vmode[1] = 144 * scale;
 	}
-	
+
 	flags = SDL_ANYFORMAT | SDL_HWPALETTE | SDL_HWSURFACE;
 
 	if (fullscreen)
@@ -180,11 +180,11 @@ void vid_init()
 	joy_init();
 
 	overlay_init();
-	
+
 	if (fb.yuv) return;
-	
+
 	SDL_LockSurface(screen);
-	
+
 	fb.w = screen->w;
 	fb.h = screen->h;
 	fb.pelsize = screen->format->BytesPerPixel;
@@ -202,7 +202,7 @@ void vid_init()
 
 	fb.enabled = 1;
 	fb.dirty = 0;
-	
+
 }
 
 
@@ -240,106 +240,106 @@ void ev_poll()
 				if (axisval > joy_commit_range)
 				{
 					if (Xstatus==2) break;
-					
+
 					if (Xstatus==0)
 					{
 						ev.type = EV_RELEASE;
 						ev.code = K_JOYLEFT;
-        			  		ev_postevent(&ev);				 		
+						ev_postevent(&ev);
 					}
-					
+
 					ev.type = EV_PRESS;
 					ev.code = K_JOYRIGHT;
 					ev_postevent(&ev);
 					Xstatus=2;
 					break;
-				}	   				   
-				
+				}
+
 				if (axisval < -(joy_commit_range))
 				{
 					if (Xstatus==0) break;
-					
+
 					if (Xstatus==2)
 					{
 						ev.type = EV_RELEASE;
 						ev.code = K_JOYRIGHT;
-        			  		ev_postevent(&ev);				 		
+						ev_postevent(&ev);
 					}
-					
+
 					ev.type = EV_PRESS;
 					ev.code = K_JOYLEFT;
 					ev_postevent(&ev);
 					Xstatus=0;
 					break;
-				}	   				   
-				
+				}
+
 				/* if control reaches here, the axis is centered,
 				 * so just send a release signal if necisary */
-				
+
 				if (Xstatus==2)
 				{
 					ev.type = EV_RELEASE;
 					ev.code = K_JOYRIGHT;
 					ev_postevent(&ev);
 				}
-				
+
 				if (Xstatus==0)
 				{
 					ev.type = EV_RELEASE;
 					ev.code = K_JOYLEFT;
 					ev_postevent(&ev);
-				}	       
+				}
 				Xstatus=1;
 				break;
-				
-			case 1: /* Y axis*/ 
+
+			case 1: /* Y axis*/
 				axisval = event.jaxis.value;
 				if (axisval > joy_commit_range)
 				{
 					if (Ystatus==2) break;
-					
+
 					if (Ystatus==0)
 					{
 						ev.type = EV_RELEASE;
 						ev.code = K_JOYUP;
-        			  		ev_postevent(&ev);				 		
+						ev_postevent(&ev);
 					}
-					
+
 					ev.type = EV_PRESS;
 					ev.code = K_JOYDOWN;
 					ev_postevent(&ev);
 					Ystatus=2;
 					break;
-				}	   				   
-				
+				}
+
 				if (axisval < -joy_commit_range)
 				{
 					if (Ystatus==0) break;
-					
+
 					if (Ystatus==2)
 					{
 						ev.type = EV_RELEASE;
 						ev.code = K_JOYDOWN;
-        			  		ev_postevent(&ev);
+						ev_postevent(&ev);
 					}
-					
+
 					ev.type = EV_PRESS;
 					ev.code = K_JOYUP;
 					ev_postevent(&ev);
 					Ystatus=0;
 					break;
-				}	   				   
-				
+				}
+
 				/* if control reaches here, the axis is centered,
 				 * so just send a release signal if necisary */
-				
+
 				if (Ystatus==2)
 				{
 					ev.type = EV_RELEASE;
 					ev.code = K_JOYDOWN;
 					ev_postevent(&ev);
 				}
-				
+
 				if (Ystatus==0)
 				{
 					ev.type = EV_RELEASE;
