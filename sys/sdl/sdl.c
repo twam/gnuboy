@@ -27,6 +27,7 @@ static int use_joy = 1, sdl_joy_num;
 static SDL_Joystick * sdl_joy = NULL;
 static const int joy_commit_range = 3276;
 static char Xstatus, Ystatus;
+static int Xhatstatus, Yhatstatus;
 
 static SDL_Surface *screen;
 static SDL_Overlay *overlay;
@@ -348,6 +349,229 @@ void ev_poll()
 				}
 				Ystatus=1;
 				break;
+			}
+			break;
+		case SDL_JOYHATMOTION:
+			if (event.jhat.value == SDL_HAT_CENTERED) {
+				/* Release right if active */
+				if (Yhatstatus == 1) {
+					ev.code = K_JOYRIGHT;
+					ev.type = EV_RELEASE;
+					ev_postevent(&ev);
+					Yhatstatus = 0;
+				}
+
+				/* Release left if active */
+				if (Yhatstatus == -1) {
+					ev.code = K_JOYLEFT;
+					ev.type = EV_RELEASE;
+					ev_postevent(&ev);
+					Yhatstatus = 0;
+				}
+
+				/* Release up if active */
+				if (Xhatstatus == 1) {
+					ev.code = K_JOYUP;
+					ev.type = EV_RELEASE;
+					ev_postevent(&ev);
+					Xhatstatus = 0;
+				}
+
+				/* Release left if active */
+				if (Xhatstatus == -1) {
+					ev.code = K_JOYDOWN;
+					ev.type = EV_RELEASE;
+					ev_postevent(&ev);
+					Xhatstatus = 0;
+				}
+			}
+			else if (event.jhat.value == SDL_HAT_LEFT) {
+				/* Release right if active */
+				if (Yhatstatus == 1) {
+					ev.code = K_JOYRIGHT;
+					ev.type = EV_RELEASE;
+					ev_postevent(&ev);
+					Yhatstatus = 0;
+				}
+
+				if (Yhatstatus == 0) {
+					ev.code = K_JOYLEFT;
+					ev.type = EV_PRESS;
+					ev_postevent(&ev);
+					Yhatstatus = -1;
+				}
+			}
+			else if (event.jhat.value == SDL_HAT_RIGHT) {
+				/* Release left if active */
+				if (Yhatstatus == -1) {
+					ev.code = K_JOYLEFT;
+					ev.type = EV_RELEASE;
+					ev_postevent(&ev);
+					Yhatstatus = 0;
+				}
+
+				if (Yhatstatus == 0) {
+					ev.code = K_JOYRIGHT;
+					ev.type = EV_PRESS;
+					ev_postevent(&ev);
+					Yhatstatus = 1;
+				}
+			}
+			else if (event.jhat.value == SDL_HAT_UP) {
+				/* Release down if active */
+				if (Xhatstatus == -1) {
+					ev.code = K_JOYDOWN;
+					ev.type = EV_RELEASE;
+					ev_postevent(&ev);
+					Xhatstatus = 0;
+				}
+
+				if (Xhatstatus == 0) {
+					ev.code = K_JOYUP;
+					ev.type = EV_PRESS;
+					ev_postevent(&ev);
+					Xhatstatus = 1;
+				}
+			}
+			else if (event.jhat.value == SDL_HAT_DOWN) {
+				/* Release down if active */
+				if (Xhatstatus == 1) {
+					ev.code = K_JOYUP;
+					ev.type = EV_RELEASE;
+					ev_postevent(&ev);
+					Xhatstatus = 0;
+				}
+
+				if (Xhatstatus == 0) {
+					ev.code = K_JOYDOWN;
+					ev.type = EV_PRESS;
+					ev_postevent(&ev);
+					Xhatstatus = -1;
+				}
+			}
+			else if (event.jhat.value == SDL_HAT_LEFTUP) {
+				/* Release down if active */
+				if (Xhatstatus == -1) {
+					ev.code = K_JOYDOWN;
+					ev.type = EV_RELEASE;
+					ev_postevent(&ev);
+					Xhatstatus = 0;
+				}
+
+				/* Release right if active */
+				if (Yhatstatus == 1) {
+					ev.code = K_JOYRIGHT;
+					ev.type = EV_RELEASE;
+					ev_postevent(&ev);
+					Yhatstatus = 0;
+				}
+
+				if (Xhatstatus == 0) {
+					ev.code = K_JOYUP;
+					ev.type = EV_PRESS;
+					ev_postevent(&ev);
+					Xhatstatus = 1;
+				}
+
+				if (Yhatstatus == 0) {
+					ev.code = K_JOYLEFT;
+					ev.type = EV_PRESS;
+					ev_postevent(&ev);
+					Yhatstatus = -1;
+				}
+			}
+			else if (event.jhat.value == SDL_HAT_LEFTDOWN) {
+				/* Release up if active */
+				if (Xhatstatus == 1) {
+					ev.code = K_JOYUP;
+					ev.type = EV_RELEASE;
+					ev_postevent(&ev);
+					Xhatstatus = 0;
+				}
+
+				/* Release right if active */
+				if (Yhatstatus == 1) {
+					ev.code = K_JOYRIGHT;
+					ev.type = EV_RELEASE;
+					ev_postevent(&ev);
+					Yhatstatus = 0;
+				}
+
+				if (Xhatstatus == 0) {
+					ev.code = K_JOYDOWN;
+					ev.type = EV_PRESS;
+					ev_postevent(&ev);
+					Xhatstatus = -1;
+				}
+
+				if (Yhatstatus == 0) {
+					ev.code = K_JOYLEFT;
+					ev.type = EV_PRESS;
+					ev_postevent(&ev);
+					Yhatstatus = -1;
+				}
+			}
+			else if (event.jhat.value == SDL_HAT_RIGHTUP) {
+				/* Release down if active */
+				if (Xhatstatus == -1) {
+					ev.code = K_JOYDOWN;
+					ev.type = EV_RELEASE;
+					ev_postevent(&ev);
+					Xhatstatus = 0;
+				}
+
+				/* Release left if active */
+				if (Yhatstatus == -1) {
+					ev.code = K_JOYLEFT;
+					ev.type = EV_RELEASE;
+					ev_postevent(&ev);
+					Yhatstatus = 0;
+				}
+
+				if (Xhatstatus == 0) {
+					ev.code = K_JOYUP;
+					ev.type = EV_PRESS;
+					ev_postevent(&ev);
+					Xhatstatus = 1;
+				}
+
+				if (Yhatstatus == 0) {
+					ev.code = K_JOYRIGHT;
+					ev.type = EV_PRESS;
+					ev_postevent(&ev);
+					Yhatstatus = 1;
+				}
+			}
+			else if (event.jhat.value == SDL_HAT_RIGHTDOWN) {
+				/* Release up if active */
+				if (Xhatstatus == 1) {
+					ev.code = K_JOYUP;
+					ev.type = EV_RELEASE;
+					ev_postevent(&ev);
+					Xhatstatus = 0;
+				}
+
+				/* Release left if active */
+				if (Yhatstatus == -1) {
+					ev.code = K_JOYLEFT;
+					ev.type = EV_RELEASE;
+					ev_postevent(&ev);
+					Yhatstatus = 0;
+				}
+
+				if (Xhatstatus == 0) {
+					ev.code = K_JOYDOWN;
+					ev.type = EV_PRESS;
+					ev_postevent(&ev);
+					Xhatstatus = -1;
+				}
+
+				if (Yhatstatus == 0) {
+					ev.code = K_JOYRIGHT;
+					ev.type = EV_PRESS;
+					ev_postevent(&ev);
+					Yhatstatus = 1;
+				}
 			}
 			break;
 		case SDL_JOYBUTTONUP:
